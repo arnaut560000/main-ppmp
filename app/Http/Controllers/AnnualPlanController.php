@@ -54,6 +54,6 @@ class AnnualPlanController extends Controller
             PlanningService::audit($r->user(), 'app', $app->id, 'approved');
         });
 
-        return back()->with('success','APP approved.');
+        return back()->with('success', 'APP approved.');
     }
 }

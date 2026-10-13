@@ -33,5 +33,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/plans/{plan}/export', [PlanController::class, 'export']);
     Route::get('/annual-plans', [AnnualPlanController::class, 'index']);
     Route::post('/annual-plans', [AnnualPlanController::class, 'store']);
-    Route::post('/annual-plans/{annualPlan}/approve',[AnnualPlanController::class, 'approve']);
+    Route::post('/annual-plans/{annualPlan}/approve', [AnnualPlanController::class, 'approve']);
 });

@@ -128,6 +128,6 @@ class WorkspaceController extends Controller
 
     public function audit(Request $r)
     {
-        return Inertia::render('Audit', ['events' => AuditEvent::with('user:id,name')->when($r->user()->role === 'office',fn ($q) => $q->where('office_id',$r->user()->office_id))->latest('id')->paginate(25)]);
+        return Inertia::render('Audit', ['events' => AuditEvent::with('user:id,name')->when($r->user()->role === 'office', fn ($q) => $q->where('office_id', $r->user()->office_id))->latest('id')->paginate(25)]);
     }
 }

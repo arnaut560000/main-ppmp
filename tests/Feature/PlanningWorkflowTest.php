@@ -225,7 +225,7 @@ class PlanningWorkflowTest extends TestCase
         $p = $this->plan();
         $data = $this->payload(['reference' => $p->reference, 'version' => 1, 'title' => 'Newer title']);
         $this->actingAs($this->planner)->put('/plans/'.$p->id, $data)->assertSessionHasNoErrors();
-        $this->actingAs($this->planner)->put('/plans/'.$p->id,[...$data, 'title' => 'Stale title'])->assertSessionHasErrors('workflow');
-        $this->assertSame('Newer title',$p->fresh()->title);
+        $this->actingAs($this->planner)->put('/plans/'.$p->id, [...$data, 'title' => 'Stale title'])->assertSessionHasErrors('workflow');
+        $this->assertSame('Newer title', $p->fresh()->title);
     }
 }
