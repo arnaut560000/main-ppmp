@@ -1,0 +1,95 @@
+export type Office = { id: number; code: string; name: string };
+export type User = {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+    office_id: number | null;
+    office?: Office;
+};
+export type Shared = {
+    auth: { user: User };
+    flash: { success?: string };
+    demo: boolean;
+    errors: Record<string, string>;
+    [key: string]: unknown;
+};
+export type Item = {
+    id: number;
+    code: string;
+    name: string;
+    specification: string;
+    category: string;
+    unit: string;
+    expense_class: string;
+    price_cents: number;
+    active: boolean;
+};
+export type Line = {
+    id: number;
+    catalogue_item_id: number;
+    code: string;
+    name: string;
+    specification: string;
+    unit: string;
+    expense_class: string;
+    price_cents: number;
+    monthly_quantities: number[];
+    quantity: number;
+    total_cents: number;
+};
+export type Plan = {
+    id: number;
+    type: "aip" | "ppmp";
+    office_id: number;
+    office: Office;
+    fiscal_year: number;
+    reference: string;
+    title: string;
+    description: string;
+    fund_source: string;
+    expected_output: string;
+    start_date: string;
+    end_date: string;
+    status: string;
+    version: number;
+    parent_id: number | null;
+    parent?: Plan;
+    annual_plan_id: number | null;
+    created_by: number;
+    creator?: User;
+    ps_cents: number;
+    mooe_cents: number;
+    fe_cents: number;
+    co_cents: number;
+    total_cents: number;
+    items: Line[];
+    updated_at: string;
+};
+export type Budget = {
+    id: number;
+    office_id: number;
+    office: Office;
+    fiscal_year: number;
+    ceiling_cents: number;
+    reserved_cents: number;
+    available_cents: number;
+};
+export type Event = {
+    id: number;
+    user?: User;
+    subject_type: string;
+    subject_id: number;
+    action: string;
+    comment: string | null;
+    created_at: string;
+    metadata?: Record<string, unknown>;
+};
+export type Paginated<T> = {
+    data: T[];
+    current_page: number;
+    last_page: number;
+    total: number;
+    prev_page_url: string | null;
+    next_page_url: string | null;
+};
