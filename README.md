@@ -53,7 +53,7 @@ All demo accounts use the password **`Talavera2027!`**.
 - Office budget creation/adjustment, with reasons captured in the audit log.
 - Catalogue creation/editing, deactivation, specifications, expense classes, and prices.
 - AIP activities with office, fiscal year, fund source, implementation dates, outputs, and PS/MOOE/FE/CO allocations.
-- PPMP requirements linked to approved AIPs, with 12 monthly quantities, quarterly summaries, server-computed totals, and saved item/price snapshots.
+- PPMP requirements linked to approved AIPs, with four quarterly quantities and amounts, server-computed totals, and saved item/price snapshots.
 - AIP review by Budget; PPMP review by the Approving Authority. Reviewers can approve or return for revision with a required reason.
 - Read-only approved records, stale-edit detection, office isolation, and audit history.
 - Basic APP batching of approved PPMPs, with one-time assignment and mayor approval.
@@ -65,7 +65,7 @@ All demo accounts use the password **`Talavera2027!`**.
 1. Log in as the office planner. The demo contains an approved AIP, a pending AIP, a draft AIP, and a pending PPMP.
 2. Create an AIP and save it. Submit it for review.
 3. Sign out and log in as Budget. Open the review queue and approve it, or return it with a comment.
-4. As the office planner, create a PPMP and select the approved AIP. Add catalogue items and monthly quantities. Save and submit.
+4. As the office planner, create a PPMP and select the approved AIP. Add catalogue items and quarterly quantities. Save and submit.
 5. As Mayor, review and approve the PPMP.
 6. As Procurement, select approved PPMPs under APP consolidation and submit a batch.
 7. As Mayor, approve that APP. Inspect document history and the activity log to follow the decisions.
@@ -94,11 +94,25 @@ php vendor/bin/pint --test
 npm.cmd run typecheck
 ```
 
-The feature suite uses an isolated in-memory SQLite database. It covers login, office boundaries, role checks, budget oversubscription, returned-plan release, immutable approvals, stale edits, server-side totals, item price history, monthly quantity validation, APP duplicate assignment, CSV formula injection, and main-page rendering.
+The feature suite uses an isolated in-memory SQLite database. It covers login, office boundaries, role checks, budget oversubscription, returned-plan release, immutable approvals, stale edits, server-side totals, item price history, quarterly quantity validation, APP duplicate assignment, CSV formula injection, and main-page rendering.
 
 Initial verification: **17 tests passed, 107 assertions**, TypeScript and production build passed, and PHP formatting passed. Browser checks exercised office login, AIP creation/submission, Budget review/approval, locked approved records, and the mobile dashboard. See [approval demonstration](docs/images/approval-demo.jpg). GitHub Actions repeats the build, tests, and PHP formatting checks on pushes and pull requests.
 
 For a production pilot, run the same suite and true parallel submission tests on the chosen production database. SQLite development tests do not establish PostgreSQL/MySQL concurrency behavior.
+
+## Quarterly PPMP update
+
+The quarterly update adds a consolidated report at `/reports/consolidated-ppmp?year=2027`. It includes approved PPMPs only, supports fiscal-year, office and exact fund-source filters, and exports all matching rows to CSV. Office planners can see only their own office. Different saved item prices/specifications remain separate rows. The screen shows 50 item rows per page; summary totals cover all matching rows.
+
+Run `php artisan migrate` before using the new code. Existing monthly schedules are summed into quarters, with their original monthly values, saved amounts, approval states and versions preserved. New quarterly entries do not invent monthly schedules. Once quarterly-only records exist, migration rollback is deliberately blocked because month-level quantities cannot be reconstructed. Back up the database before applying the update.
+
+Run `php artisan db:seed --class=PpmpOfficeSeeder` to add the 34 office entries identified in the example workbook. It preserves existing office IDs/names and does not create users, budgets or approvals. Existing GSO/MEO records are reused. The system's separate ICT-PIO office is retained. Configure planner accounts through Administration and allocations through Office budgets.
+
+The workbook also has six service headings (Building/Grounds/R&M, Streetlights, Park/Plaza/Monument, Cemetery, Public Market, Slaughterhouse) and two fund headings (20% MDF, 5% MDRRMF). These are not seeded as departments. Map services to their responsible offices before entering their plans; use the fund-source field/filter for funding distinctions. This update provides an office-based report, not an exact 42-group replica of the workbook.
+
+GSO's catalogue category supplies the object-of-expenditures snapshot when a draft is saved. Existing saved lines did not retain category history, so they remain labeled `Unclassified legacy item` instead of receiving a guessed historical classification. Catalogue maintenance cannot change a saved snapshot.
+
+The example workbook's item catalogue, prices and quantities are not imported by this update. CSV is supported; native Excel template export is not included. Validation in an isolated preview: 25 tests / 178 assertions, TypeScript, Vite production build, and PHP formatting passed. The new UI has not had an interactive browser smoke test.
 
 ## Project layout
 

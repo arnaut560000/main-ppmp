@@ -69,7 +69,8 @@ class PlanController extends Controller
             'version' => [$plan ? 'required' : 'nullable', 'integer', 'min:1'],
             'ps' => 'nullable|numeric|min:0|max:1000000000|decimal:0,2', 'mooe' => 'nullable|numeric|min:0|max:1000000000|decimal:0,2', 'fe' => 'nullable|numeric|min:0|max:1000000000|decimal:0,2', 'co' => 'nullable|numeric|min:0|max:1000000000|decimal:0,2',
             'items' => 'nullable|array|list|max:200', 'items.*.catalogue_item_id' => 'required|integer|distinct|exists:catalogue_items,id',
-            'items.*.monthly_quantities' => 'required|array|list|size:12', 'items.*.monthly_quantities.*' => 'required|integer|min:0|max:100000',
+            'items.*.quarterly_quantities' => 'required|array|list|size:4', 'items.*.quarterly_quantities.*' => 'required|integer|min:0|max:300000',
+            'items.*.monthly_quantities' => 'prohibited',
         ]);
     }
 
@@ -121,9 +122,13 @@ class PlanController extends Controller
                 $write(['PS (PHP)', 'MOOE (PHP)', 'FE (PHP)', 'CO (PHP)', 'Total (PHP)']);
                 $write(array_map(fn ($k) => number_format($plan->$k / 100, 2, '.', ''), ['ps_cents', 'mooe_cents', 'fe_cents', 'co_cents', 'total_cents']));
             } else {
-                $write(['Code', 'Item', 'Unit', 'Unit cost (PHP)', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Quantity', 'Total (PHP)']);
+                $write(['Object of expenditures', 'Code', 'Item', 'Unit', 'Unit cost (PHP)', 'Q1 quantity', 'Q1 amount (PHP)', 'Q2 quantity', 'Q2 amount (PHP)', 'Q3 quantity', 'Q3 amount (PHP)', 'Q4 quantity', 'Q4 amount (PHP)', 'Total quantity', 'Total amount (PHP)']);
                 foreach ($plan->items as $item) {
-                    $write([$item->code, $item->name, $item->unit, number_format($item->price_cents / 100, 2, '.', ''), ...$item->monthly_quantities, $item->quantity, number_format($item->total_cents / 100, 2, '.', '')]);
+                    $periods = [];
+                    foreach ($item->quarterly_quantities as $quantity) {
+                        array_push($periods, $quantity, number_format($quantity * $item->price_cents / 100, 2, '.', ''));
+                    }
+                    $write([$item->object_of_expenditure ?? 'Unclassified legacy item', $item->code, $item->name, $item->unit, number_format($item->price_cents / 100, 2, '.', ''), ...$periods, $item->quantity, number_format($item->total_cents / 100, 2, '.', '')]);
                 }
             }
             fclose($out);

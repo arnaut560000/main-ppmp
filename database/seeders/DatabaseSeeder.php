@@ -59,9 +59,9 @@ class DatabaseSeeder extends Seeder
         $service->transition($users['office'], $pending, 'submit', 1, null);
         $service->save($users['office'], [...$base, 'reference' => '2027-ICT-003', 'title' => 'Digital skills and capacity development', 'mooe' => '150000', 'co' => '0']);
         $ppmp = $service->save($users['office'], [...$base, 'type' => 'ppmp', 'parent_id' => $aip->id, 'reference' => 'PPMP-2027-001', 'title' => 'ICT equipment and office supplies', 'items' => [
-            ['catalogue_item_id' => 1, 'monthly_quantities' => [2, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0]],
-            ['catalogue_item_id' => 3, 'monthly_quantities' => [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]],
-            ['catalogue_item_id' => 5, 'monthly_quantities' => [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+            ['catalogue_item_id' => 1, 'quarterly_quantities' => [2, 1, 1, 0]],
+            ['catalogue_item_id' => 3, 'quarterly_quantities' => [30, 30, 30, 30]],
+            ['catalogue_item_id' => 5, 'quarterly_quantities' => [2, 0, 0, 0]],
         ]]);
         $service->transition($users['office'], $ppmp, 'submit', 1, null);
         $this->command?->info('Local demo created. Accounts: {role}@epprism.test; password: Talavera2027!');

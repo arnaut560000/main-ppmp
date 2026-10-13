@@ -34,7 +34,9 @@ export type Line = {
     unit: string;
     expense_class: string;
     price_cents: number;
-    monthly_quantities: number[];
+    monthly_quantities: number[] | null;
+    quarterly_quantities: number[];
+    object_of_expenditure: string | null;
     quantity: number;
     total_cents: number;
 };

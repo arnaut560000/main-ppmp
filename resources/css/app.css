@@ -1775,3 +1775,40 @@ td strong {
         padding: 10px;
     }
 }
+
+.quarters-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+.quarters-grid label {
+    display: grid;
+    gap: 8px;
+    font-size: 13px;
+}
+.consolidated-scroll {
+    max-height: 70vh;
+    overflow: auto;
+}
+.consolidated-table {
+    width: max-content;
+    min-width: 100%;
+}
+.consolidated-table th,
+.consolidated-table td {
+    border-right: 1px solid #dce5df;
+}
+.consolidated-table thead th {
+    text-align: center;
+    white-space: nowrap;
+}
+.consolidated-table td:nth-child(2) {
+    min-width: 240px;
+    max-width: 360px;
+    white-space: normal;
+}
+@media (max-width: 640px) {
+    .quarters-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

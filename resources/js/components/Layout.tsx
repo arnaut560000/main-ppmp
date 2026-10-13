@@ -31,6 +31,11 @@ export default function Layout({ children }: { children: ReactNode }) {
         },
         { href: "/plans?type=ppmp", label: "Procurement plans", icon: Layers },
         {
+            href: "/reports/consolidated-ppmp",
+            label: "Consolidated PPMP",
+            icon: BookOpen,
+        },
+        {
             href: "/plans?status=submitted",
             label: "Review & approvals",
             icon: ClipboardCheck,

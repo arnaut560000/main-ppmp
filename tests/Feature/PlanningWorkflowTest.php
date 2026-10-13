@@ -141,7 +141,7 @@ class PlanningWorkflowTest extends TestCase
     {
         $aip = $this->approvedAip();
         $item = $this->item();
-        $this->actingAs($this->planner)->post('/plans', $this->payload(['type' => 'ppmp', 'parent_id' => $aip->id, 'total_cents' => 1, 'items' => [['catalogue_item_id' => $item->id, 'price_cents' => 1, 'monthly_quantities' => [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]]]))->assertSessionHasNoErrors();
+        $this->actingAs($this->planner)->post('/plans', $this->payload(['type' => 'ppmp', 'parent_id' => $aip->id, 'total_cents' => 1, 'items' => [['catalogue_item_id' => $item->id, 'price_cents' => 1, 'quarterly_quantities' => [1, 0, 1, 0]]]]))->assertSessionHasNoErrors();
         $p = Plan::where('type', 'ppmp')->firstOrFail();
         $this->assertSame(4000000, $p->total_cents);
         $item->update(['price_cents' => 9000000, 'name' => 'Changed name']);
@@ -156,7 +156,7 @@ class PlanningWorkflowTest extends TestCase
     {
         $aip = $this->approvedAip();
         $item = $this->item();
-        $data = ['type' => 'ppmp', 'parent_id' => $aip->id, 'items' => [['catalogue_item_id' => $item->id, 'monthly_quantities' => [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]]];
+        $data = ['type' => 'ppmp', 'parent_id' => $aip->id, 'items' => [['catalogue_item_id' => $item->id, 'quarterly_quantities' => [2, 0, 0, 0]]]];
         $p = $this->plan($data);
         $this->submit($p)->assertSessionHasNoErrors();
         $other = $this->plan($data);
@@ -167,12 +167,12 @@ class PlanningWorkflowTest extends TestCase
     {
         $parent = $this->plan();
         $item = $this->item();
-        $line = ['catalogue_item_id' => $item->id, 'monthly_quantities' => [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
+        $line = ['catalogue_item_id' => $item->id, 'quarterly_quantities' => [1, 0, 0, 0]];
         $data = $this->payload(['type' => 'ppmp', 'parent_id' => $parent->id, 'items' => [$line]]);
         $this->actingAs($this->planner)->post('/plans', $data)->assertSessionHasErrors('workflow');
         $this->actingAs($this->planner)->post('/plans', [...$data, 'items' => [$line, $line]])->assertSessionHasErrors('items.0.catalogue_item_id');
-        $line['monthly_quantities'][0] = 1.5;
-        $this->actingAs($this->planner)->post('/plans', [...$data, 'items' => [$line]])->assertSessionHasErrors('items.0.monthly_quantities.0');
+        $line['quarterly_quantities'][0] = 1.5;
+        $this->actingAs($this->planner)->post('/plans', [...$data, 'items' => [$line]])->assertSessionHasErrors('items.0.quarterly_quantities.0');
     }
 
     public function test_budget_reduction_cannot_undercut_reservations(): void
@@ -189,7 +189,7 @@ class PlanningWorkflowTest extends TestCase
     {
         $aip = $this->approvedAip();
         $item = $this->item();
-        $p = $this->plan(['type' => 'ppmp', 'parent_id' => $aip->id, 'items' => [['catalogue_item_id' => $item->id, 'monthly_quantities' => [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]]]);
+        $p = $this->plan(['type' => 'ppmp', 'parent_id' => $aip->id, 'items' => [['catalogue_item_id' => $item->id, 'quarterly_quantities' => [1, 0, 0, 0]]]]);
         $this->submit($p);
         $this->actingAs($this->mayor)->post('/plans/'.$p->id.'/transition', ['action' => 'approve', 'version' => $p->fresh()->version]);
         $procurement = User::factory()->create(['role' => 'procurement']);

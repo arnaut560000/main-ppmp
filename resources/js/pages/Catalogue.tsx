@@ -117,7 +117,7 @@ export default function Catalogue({
                                     }
                                 />
                             </Field>
-                            <Field label="Category">
+                            <Field label="Object of expenditures / category">
                                 <input
                                     required
                                     value={form.data.category}

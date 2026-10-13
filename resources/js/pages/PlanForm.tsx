@@ -46,7 +46,7 @@ export default function PlanForm({
         items:
             plan?.items.map((i) => ({
                 catalogue_item_id: i.catalogue_item_id,
-                monthly_quantities: i.monthly_quantities,
+                quarterly_quantities: i.quarterly_quantities,
             })) || [],
     });
     const availableParents = parents.filter(
@@ -66,22 +66,14 @@ export default function PlanForm({
                       s +
                       (catalogue.find((i) => i.id === line.catalogue_item_id)
                           ?.price_cents || 0) *
-                          line.monthly_quantities.reduce((a, b) => a + b, 0),
+                          line.quarterly_quantities.reduce((a, b) => a + b, 0),
                   0,
               );
-    const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
+    const quarters = [
+        "Q1 (Jan–Mar)",
+        "Q2 (Apr–Jun)",
+        "Q3 (Jul–Sep)",
+        "Q4 (Oct–Dec)",
     ];
     return (
         <>
@@ -97,7 +89,7 @@ export default function PlanForm({
                 description={
                     type === "aip"
                         ? "Define the activity, expected output, and proposed allocation."
-                        : "Link requirements to an approved AIP and schedule quantities by month."
+                        : "Link requirements to an approved AIP and schedule quantities by quarter."
                 }
             />
             <Errors errors={form.errors} />
@@ -324,8 +316,8 @@ export default function PlanForm({
                                             {
                                                 catalogue_item_id:
                                                     Number(selected),
-                                                monthly_quantities:
-                                                    Array(12).fill(0),
+                                                quarterly_quantities:
+                                                    Array(4).fill(0),
                                             },
                                         ]);
                                         setSelected("");
@@ -337,7 +329,7 @@ export default function PlanForm({
                             {!form.data.items.length && (
                                 <div className="note">
                                     Add your first item, then enter quantities
-                                    in the months when you need it.
+                                    in the quarters when you need it.
                                 </div>
                             )}
                             {form.data.items.map((line, index) => {
@@ -383,21 +375,21 @@ export default function PlanForm({
                                                 <Trash2 size={17} />
                                             </button>
                                         </div>
-                                        <div className="months-grid">
-                                            {months.map((m, month) => (
+                                        <div className="quarters-grid">
+                                            {quarters.map((m, quarter) => (
                                                 <label key={m}>
                                                     {m}
                                                     <input
                                                         aria-label={`${item?.name || "Item"} ${m} quantity`}
                                                         type="number"
                                                         min="0"
-                                                        max="100000"
+                                                        max="300000"
                                                         step="1"
                                                         required
                                                         value={
                                                             line
-                                                                .monthly_quantities[
-                                                                month
+                                                                .quarterly_quantities[
+                                                                quarter
                                                             ]
                                                         }
                                                         onChange={(e) =>
@@ -409,14 +401,14 @@ export default function PlanForm({
                                                                         index
                                                                             ? {
                                                                                   ...l,
-                                                                                  monthly_quantities:
-                                                                                      l.monthly_quantities.map(
+                                                                                  quarterly_quantities:
+                                                                                      l.quarterly_quantities.map(
                                                                                           (
                                                                                               q,
                                                                                               j,
                                                                                           ) =>
                                                                                               j ===
-                                                                                              month
+                                                                                              quarter
                                                                                                   ? Number(
                                                                                                         e
                                                                                                             .target
@@ -438,22 +430,21 @@ export default function PlanForm({
                                                 <span key={q}>
                                                     Q{q + 1}:{" "}
                                                     <b>
-                                                        {line.monthly_quantities
-                                                            .slice(
-                                                                q * 3,
-                                                                q * 3 + 3,
-                                                            )
-                                                            .reduce(
-                                                                (a, b) => a + b,
-                                                                0,
-                                                            )}
+                                                        {money(
+                                                            line
+                                                                .quarterly_quantities[
+                                                                q
+                                                            ] *
+                                                                (item?.price_cents ||
+                                                                    0),
+                                                        )}
                                                     </b>
                                                 </span>
                                             ))}
                                             <strong>
                                                 {money(
                                                     (item?.price_cents || 0) *
-                                                        line.monthly_quantities.reduce(
+                                                        line.quarterly_quantities.reduce(
                                                             (a, b) => a + b,
                                                             0,
                                                         ),

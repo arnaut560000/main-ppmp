@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AnnualPlanController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ConsolidatedPpmpController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/offices', [WorkspaceController::class, 'saveOffice']);
     Route::post('/users', [WorkspaceController::class, 'saveUser']);
     Route::get('/audit', [WorkspaceController::class, 'audit']);
+    Route::get('/reports/consolidated-ppmp', ConsolidatedPpmpController::class);
     Route::get('/plans', [PlanController::class, 'index']);
     Route::get('/plans/create', [PlanController::class, 'create']);
     Route::post('/plans', [PlanController::class, 'store']);

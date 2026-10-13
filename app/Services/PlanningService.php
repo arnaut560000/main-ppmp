@@ -56,14 +56,14 @@ class PlanningService
                     if (! $item) {
                         self::fail('One of the selected catalogue items is no longer active.');
                     }
-                    $months = array_map('intval', $line['monthly_quantities']);
-                    $quantity = array_sum($months);
+                    $quarters = array_map('intval', $line['quarterly_quantities']);
+                    $quantity = array_sum($quarters);
                     if ($quantity < 1) {
-                        self::fail('Each item needs a quantity in at least one month.');
+                        self::fail('Each item needs a quantity in at least one quarter.');
                     }
                     $cost = $item->price_cents * $quantity;
                     $amounts[strtolower($item->expense_class).'_cents'] += $cost;
-                    $lines[] = ['catalogue_item_id' => $item->id, ...$item->only(['code', 'name', 'specification', 'unit', 'expense_class', 'price_cents']), 'monthly_quantities' => $months, 'quantity' => $quantity, 'total_cents' => $cost];
+                    $lines[] = ['catalogue_item_id' => $item->id, ...$item->only(['code', 'name', 'specification', 'unit', 'expense_class', 'price_cents']), 'monthly_quantities' => null, 'quarterly_quantities' => $quarters, 'object_of_expenditure' => $item->category, 'quantity' => $quantity, 'total_cents' => $cost];
                 }
                 if (! $lines) {
                     self::fail('Add at least one catalogue item.');

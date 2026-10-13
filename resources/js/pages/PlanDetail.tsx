@@ -171,7 +171,7 @@ export default function PlanDetail({
                                             </th>
                                             {[1, 2, 3, 4].map((q) => (
                                                 <th key={q} className="numeric">
-                                                    Q{q}
+                                                    Q{q} qty / amount
                                                 </th>
                                             ))}
                                             <th className="numeric">Total</th>
@@ -185,6 +185,9 @@ export default function PlanDetail({
                                                     <small>
                                                         {i.code} · {i.unit} ·{" "}
                                                         {i.expense_class}
+                                                        <br />
+                                                        {i.object_of_expenditure ||
+                                                            "Unclassified legacy item"}
                                                     </small>
                                                 </td>
                                                 <td className="numeric">
@@ -195,15 +198,21 @@ export default function PlanDetail({
                                                         key={q}
                                                         className="numeric"
                                                     >
-                                                        {i.monthly_quantities
-                                                            .slice(
-                                                                q * 3,
-                                                                q * 3 + 3,
-                                                            )
-                                                            .reduce(
-                                                                (a, b) => a + b,
-                                                                0,
+                                                        {
+                                                            i
+                                                                .quarterly_quantities[
+                                                                q
+                                                            ]
+                                                        }
+                                                        <small>
+                                                            {money(
+                                                                i
+                                                                    .quarterly_quantities[
+                                                                    q
+                                                                ] *
+                                                                    i.price_cents,
                                                             )}
+                                                        </small>
                                                     </td>
                                                 ))}
                                                 <td className="numeric amount">
